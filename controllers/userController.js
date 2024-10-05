@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const z = require('zod')
 const jwt = require('jsonwebtoken')
 const { JWT_USER_PASSWORD } = require('../config.js')
-const { userModel } =  require('../db.js')
+const { userModel, courseModel } =  require('../db.js')
 
 
 //User Signup Control
@@ -92,6 +92,26 @@ const userSigin = async (req,res) => {
     }
 }
 
+const getCourses = async (req,res) => {
+    const userId = req.userId
+
+    let myCourse
+    try {
+        myCourse = courseModel.find({
+            userId : userId
+        })
+    } catch(e) {
+        res.status(400).json({
+            message : "No Courses Found",
+            success : false
+        })
+    }
+
+    res.status(200).json({
+        courses : myCourse,
+        success : true
+    })
+}
 module.exports = {
-    userSignup , userSigin
+    userSignup , userSigin , getCourses
 }
