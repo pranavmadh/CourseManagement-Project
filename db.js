@@ -4,15 +4,15 @@ const Schema = mongoose.Schema
 const ObjectId = mongoose.Types.ObjectId
 
 const userSchema = new Schema({
-    firstName : String,
-    lastName : String,
+    firstname : String,
+    lastname : String,
     email : {type : String, unique : true},
     password : String
 })
 
 const adminSchema = new Schema({
-    firstName : String,
-    lastName : String,
+    firstname : String,
+    lastname : String,
     email : {type : String, unique : true},
     password : String
 })

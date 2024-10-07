@@ -1,0 +1,53 @@
+.aboutContainer {
+    display: flex;
+    background-color: rgb(231, 231, 231);
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.aboutContainer .contentContainer {
+    width: 1200px;
+    height: 620px;
+}
+.aboutContainer .nameContainer {
+    font-size: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.aboutContainer .nameContainer .welcome {
+    display: flex;
+}
+
+.aboutContainer .nameContainer .name {
+    color: #4454fc;
+}
+
+.about p {
+    font-size: 15px;
+}
+
+
+.about h2 {
+    font-weight: 500;
+}
+
+.about h2 span {
+    font-weight: 600;
+}
+
+button {
+    background-color: #4454fc;
+    color: #ffffff;
+    width: 100px;
+    height: 40px;
+    font-weight: 600;
+    border-radius: 10px;
+    font-size: 15px;
+    border: 2px solid #4454fc;
+    cursor: pointer;
+}

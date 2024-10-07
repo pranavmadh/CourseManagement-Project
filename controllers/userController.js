@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 const z = require('zod')
 const jwt = require('jsonwebtoken')
 const { JWT_USER_PASSWORD } = require('../config.js')
-const { userModel, courseModel } =  require('../db.js')
+const { userModel, courseModel, purchaseModel } =  require('../db.js')
 
 
 //User Signup Control
@@ -28,10 +28,21 @@ const userSignup =  async (req,res) => {
         return
     }
 
+    console.log(req.body)
     const firstname = req.body.firstname
     const lastname = req.body.lastname
     const email = req.body.email
     const password = req.body.password
+
+    const existingUser = await userModel.findOne({ email });
+        if (existingUser) {
+            res.status(400).json({
+            message: "Email already in use",
+            signup: false
+        });
+        return;
+    }
+
 
     const hashedPassword = await bcrypt.hash(password , 5)
 
@@ -40,21 +51,18 @@ const userSignup =  async (req,res) => {
             firstname : firstname,
             lastname : lastname,
             email : email,
-            password : hashedPassword
-        })
-
-    } catch(e){
+            password: hashedPassword
+        });
+        res.status(200).json({
+            message: "Sign up Successful!",
+            signup: true
+        });
+    } catch (e) {
         res.status(400).json({
-            message : "Failed to Insert into DB",
-            signup :  false
-        })
-    }
-    
-
-    res.status(200).json({
-        message : "Sign up Successful!",
-        signup : true
-    })
+            message: "Failed to Insert into DB: " + e.message, // Include error message
+            signup: false
+        });
+    }    
 }
 
 //User Sigin Control
@@ -92,26 +100,55 @@ const userSigin = async (req,res) => {
     }
 }
 
-const getCourses = async (req,res) => {
-    const userId = req.userId
+const getCourses = async (req, res) => {
+    const userId = req.userId;
+    
+    console.log(userId);
 
-    let myCourse
+    let myCourse;
     try {
-        myCourse = courseModel.find({
-            userId : userId
-        })
-    } catch(e) {
-        res.status(400).json({
-            message : "No Courses Found",
-            success : false
-        })
+        myCourse = await purchaseModel.find({
+            userID: userId
+        });
+        console.log(myCourse);
+    } catch (e) {
+        return res.status(400).json({
+            message: "No Courses Found",
+            success: false
+        });
+    }
+
+    // Extract course IDs from myCourse
+    const allCourse = myCourse.map((c) => c.courseID);
+    console.log(allCourse);
+
+    let courses;
+
+    try {
+        // Use Promise.all to wait for all async operations in map
+        courses = await Promise.all(
+            allCourse.map(async (courseID) => {
+                // Fetch course by courseID
+                const foundCourse = await courseModel.findOne({
+                    _id: courseID
+                });
+                return foundCourse;
+            })
+        );
+        console.log(courses);
+    } catch (e) {
+        return res.status(400).json({
+            message: "No Courses Found",
+            success: false
+        });
     }
 
     res.status(200).json({
-        courses : myCourse,
-        success : true
-    })
-}
+        courses: courses,
+        success: true
+    });
+};
+
 module.exports = {
     userSignup , userSigin , getCourses
 }

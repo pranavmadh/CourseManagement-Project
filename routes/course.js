@@ -1,10 +1,10 @@
 const express = require('express')
-const { purchaseModel, courseModel } = require('../db')
 const { coursePurchase, coursePreview } = require('../controllers/courseController')
+const userAuth = require('../Middlewares/userAuth')
 const courseRouter = express.Router()
 
 
-courseRouter.post('/purchase', coursePurchase)
+courseRouter.post('/purchase',userAuth, coursePurchase)
 
 courseRouter.post('/preview', coursePreview)
 

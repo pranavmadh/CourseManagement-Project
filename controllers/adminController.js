@@ -142,6 +142,7 @@ const addCourse = async (req,res) => {
 
 const updateCourse = async (req, res) => {
     const courseId = req.query.id;
+    const adminId = req.userId
 
     console.log(courseId);
 
@@ -155,7 +156,7 @@ const updateCourse = async (req, res) => {
     const body = req.body;
 
     try {
-        await courseModel.findOneAndUpdate({ _id: courseId }, body);
+        await courseModel.findOneAndUpdate({ creatorId : adminId,_id: courseId }, body);
     } catch (e) {
         return res.status(400).json({
             message: "Update Failed: Error occurred during update",
